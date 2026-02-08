@@ -2,7 +2,7 @@ FROM node:14 AS build_image
 WORKDIR /usr/src/app
 COPY . ./client
 
-RUN cd client && npm install && npx browserslist@latest --update-db &&npm run build --prod
+RUN cd client && npm install  && npm run build --prod
 
 FROM nginx:latest
 
