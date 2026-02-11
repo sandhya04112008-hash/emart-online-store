@@ -8,7 +8,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app:javaapi
+      app: javaapi
   replicas: 1
   template:
     metadata:
