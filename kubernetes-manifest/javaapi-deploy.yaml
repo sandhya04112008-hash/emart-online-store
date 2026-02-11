@@ -15,6 +15,7 @@ spec:
       labels:
         app: javaapi
     spec:
+      serviceAccountName: javaapi-sa
       # initContainers:
         # Init containers are exactly like regular containers, except:
           # - Init containers always run to completion.
@@ -27,8 +28,9 @@ spec:
         env:
         - name: AWS_REGION
           value: ap-south-1
-        - name: DB_SECRET_NAME
-          value: emart-db-devapp-credentials
+        envFrom:
+        - secretRef:
+            name: emart-db-secret
         resources:
             requests:
               memory: "512Mi"
@@ -36,4 +38,3 @@ spec:
             limits:
               memory: "1Gi"
               cpu: "500m"
-       
