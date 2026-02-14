@@ -14,7 +14,8 @@ metadata:
 
 spec:
   rules:
-  - http:
+  - host: abc.qmvpro.shop
+    http:
       paths:
       - path: /
         pathType: Prefix
@@ -23,17 +24,19 @@ spec:
             name: clientsvc
             port:
               number: 4200
-      # - path: /api
-      #   pathType: Prefix
-      #   backend:
-      #     service:
-      #       name: api
-      #       port:
-      #         number: 5000
-      # - path: /webapi
-      #   pathType: Prefix
-      #   backend:
-      #     service:
-      #       name: webapi
-      #       port:
-      #         number: 9000
+
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: nodeapi
+            port:
+              number: 5000
+
+      - path: /webapi
+        pathType: Prefix
+        backend:
+          service:
+            name: javaapi-svc
+            port:
+              number: 9000
