@@ -14,7 +14,7 @@ metadata:
 
 spec:
   rules:
-  - host: abc.qmvpro.shop
+  - host: emart.qmvpro.shop
     http:
       paths:
       - path: /
