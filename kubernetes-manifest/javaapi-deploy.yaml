@@ -30,7 +30,7 @@ spec:
           value: ap-south-1
         envFrom:
         - secretRef:
-            name: emart-db-secret
+            name: emart-db-credentials-dev
         resources:
             requests:
               memory: "512Mi"
