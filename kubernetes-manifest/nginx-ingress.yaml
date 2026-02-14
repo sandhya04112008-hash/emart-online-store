@@ -17,14 +17,6 @@ spec:
   - host: emart.qmvpro.shop
     http:
       paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: clientsvc
-            port:
-              number: 4200
-
       - path: /api
         pathType: Prefix
         backend:
@@ -40,3 +32,11 @@ spec:
             name: javaapi-svc
             port:
               number: 9000
+              
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: clientsvc
+            port:
+              number: 4200
