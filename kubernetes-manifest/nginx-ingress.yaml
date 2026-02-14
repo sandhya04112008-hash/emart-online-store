@@ -25,14 +25,6 @@ spec:
             port:
               number: 4200
 
-      - path: /api/user
-        pathType: Prefix
-        backend:
-          service:
-            name: javaapi-svc
-            port:
-              number: 9000
-
       - path: /api
         pathType: Prefix
         backend:

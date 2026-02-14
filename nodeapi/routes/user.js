@@ -2,12 +2,50 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
 
 const secretOrKey = require("../config/keys").secretOrKey;
 const User = require("../models/User"); // User model
 
 const validateRegisterInput = require("../validation/register"); // register validation
 const validateLoginInput = require("../validation/login"); // login validation
+
+// Email configuration using environment variables
+const emailTransporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER || 'your-email@gmail.com',
+    pass: process.env.EMAIL_PASSWORD || ''
+  }
+});
+
+// Helper function to send registration email asynchronously
+async function sendRegistrationEmail(to, fname) {
+  try {
+    await emailTransporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: to,
+      subject: "E_MART Registration Successful",
+      text: `Dear ${fname}! Your Registration Finished Successfully.\nWelcome to E-MART Family.\nThank you!`
+    });
+  } catch (error) {
+    console.log("Warning: Could not send registration email:", error.message);
+  }
+}
+
+// Helper function to send login email asynchronously
+async function sendLoginEmail(to, fname) {
+  try {
+    await emailTransporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: to,
+      subject: "Login Alert from E-Mart",
+      text: `Dear ${fname}, you have logged in successfully at ${new Date().toISOString()}`
+    });
+  } catch (error) {
+    console.log("Warning: Could not send login email:", error.message);
+  }
+}
 
 //----------------------------------Routes----------------------------------//
 
@@ -28,46 +66,8 @@ router.post("/register", (req, res) => {
           return res.status(400).json({ success: false, message: errors.cardId });
         } else {
 
-///mailing
-
-const nodemailer = require("nodemailer");
- 
-var sender = nodemailer.createTransport({
-  service: 'gmail',
-  type: "SMTP",
-  host: "smtp.gmail.com",
-  auth: {
-    user: 'keshav.visu@gmail.com',
-    pass: '271298318929'
-  }
-});
- 
-var mail = {
-  from: "keshav.visu@gmail.com",
-  to: req.body.email,
-  subject: "E_MART Registration Successfull",
-  text: "Dear "+req.body.fname+"! Your Registration Finished Successfully.\nWelcome to E-MART Family.\n Thankyou!"
-};
- 
-sender.sendMail(mail, function(error, info) {
-  if (error) {
-    console.log(error);
-  } else {
-    console.log("Email sent successfully: "
-                 + info.response);
-  }
-});
-
-
-
-// mailing end
-
-          // Admin Role
-             urole=0;
-              if(req.body.fname=="admin"||req.body.fname=="ADMIN"||
-              req.body.lname=="admin"||req.body.lname=="ADMIN"||req.body.email=="admin@gmail.com"||
-              req.body.email=="admin@mail.com"||req.body.email=="ADMIN@gmail.com"||
-              req.body.email=="ADMIN@mail.com") {urole =1};
+          // Admin Role - Only set to 1 if explicitly provided and user is authorized
+          const urole = req.body.role === 1 && req.body.adminKey === process.env.ADMIN_KEY ? 1 : 0;
           // Admin Role
           
           const newUser = new User({
@@ -123,42 +123,12 @@ router.post("/login", (req, res) => {
         jwt.sign(payload, secretOrKey, (err, token) => {
           if (err) throw err;
           res.json({ success: true, message: "Token was assigned", token: token, user: user });
+          
+          // Send email asynchronously (non-blocking) - don't wait for it
+          sendLoginEmail(email, user.fname).catch(err => 
+            console.log("Warning: Could not send login email:", err.message)
+          );
         });
-
-
-///mailing
-
-const nodemailer = require("nodemailer");
- 
-var sender = nodemailer.createTransport({
-  service: 'gmail',
-  type: "SMTP",
-  host: "smtp.gmail.com",
-  auth: {
-    user: 'keshav.visu@gmail.com',
-    pass: '21312312312'
-  }
-});
- 
-var mail = {
-  from: "keshav.visu@gmail.com",
-  to: email,
-  subject: "Login alert mail from E-Mart",
-  text: "Dear "+email +" , you have Loggedin successfully at "+Date.now()
-};
- 
-sender.sendMail(mail, function(error, info) {
-  if (error) {
-    console.log(error);
-  } else {
-    console.log("Email sent successfully: "
-                 + info.response);
-  }
-});
-
-
-
-// mailing end
 
 
 
