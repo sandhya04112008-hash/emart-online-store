@@ -26,13 +26,12 @@ aws iam create-policy \
 
 echo ""
 echo "[3/8] Creating IAM service account for External Secrets..."
-eksctl create iamserviceaccount \
+exsctl create iamserviceaccount \
   --cluster $CLUSTER_NAME \
   --namespace external-secrets-system \
   --name external-secrets \
   --attach-policy-arn arn:aws:iam::${AWS_ACCOUNT_ID}:policy/ExternalSecretsPolicy \
-  --approve \
-  --override-existing-serviceaccounts
+  --approve
 
 echo ""
 echo "[4/8] Installing External Secrets Operator..."
@@ -57,13 +56,12 @@ aws iam create-policy \
 
 echo ""
 echo "[7/8] Creating IAM service account for ALB Controller..."
-eksctl create iamserviceaccount \
+exsctl create iamserviceaccount \
   --cluster $CLUSTER_NAME \
   --namespace kube-system \
   --name aws-load-balancer-controller \
   --attach-policy-arn arn:aws:iam::${AWS_ACCOUNT_ID}:policy/AWSLoadBalancerControllerIAMPolicy \
-  --approve \
-  --override-existing-serviceaccounts
+  --approve
 
 echo ""
 echo "[8/8] Installing AWS Load Balancer Controller..."
