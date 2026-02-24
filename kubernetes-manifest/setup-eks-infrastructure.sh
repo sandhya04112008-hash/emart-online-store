@@ -4,12 +4,14 @@
 CLUSTER_NAME="emart-dev-app"
 AWS_REGION="ap-south-1"
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+VPC_ID=$(aws eks describe-cluster --name $CLUSTER_NAME --region $AWS_REGION --query "cluster.resourcesVpcConfig.vpcId" --output text)
 
 echo "=========================================="
 echo "EKS Cluster Setup Script"
 echo "Cluster: $CLUSTER_NAME"
 echo "Region: $AWS_REGION"
 echo "Account: $AWS_ACCOUNT_ID"
+echo "VPC ID: $VPC_ID"
 echo "=========================================="
 
 # 1. Associate OIDC provider
@@ -70,7 +72,8 @@ helm install aws-load-balancer-controller eks/aws-load-balancer-controller \
   -n kube-system \
   --set clusterName=$CLUSTER_NAME \
   --set serviceAccount.create=false \
-  --set serviceAccount.name=aws-load-balancer-controller
+  --set serviceAccount.name=aws-load-balancer-controller \
+  --set vpcId=$VPC_ID
 
 # 4. Apply Kubernetes manifests
 echo ""
