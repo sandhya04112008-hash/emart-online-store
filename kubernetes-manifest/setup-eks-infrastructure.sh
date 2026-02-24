@@ -26,7 +26,7 @@ aws iam create-policy \
 
 echo ""
 echo "[3/8] Creating IAM service account for External Secrets..."
-exsctl create iamserviceaccount \
+eksctl create iamserviceaccount \
   --cluster $CLUSTER_NAME \
   --namespace external-secrets-system \
   --name external-secrets \
@@ -56,7 +56,7 @@ aws iam create-policy \
 
 echo ""
 echo "[7/8] Creating IAM service account for ALB Controller..."
-exsctl create iamserviceaccount \
+eksctl create iamserviceaccount \
   --cluster $CLUSTER_NAME \
   --namespace kube-system \
   --name aws-load-balancer-controller \
